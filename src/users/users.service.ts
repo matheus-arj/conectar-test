@@ -68,4 +68,11 @@ export class UsersService {
   public async delete(id: string): Promise<User> {
     return await this.usersRepository.delete(id);
   }
+
+  public async findByEmail(email: string): Promise<User | null> {
+    const user = await this.usersRepository.findByEmail(email);
+    if (!user)
+      throw new NotFoundException(`User with email: ${email} not found`);
+    return user;
+  }
 }
