@@ -64,4 +64,8 @@ export class UsersService {
     Object.assign(user, updateUserDto);
     return await this.usersRepository.updateUser(id, user);
   }
+
+  public async delete(id: string): Promise<User> {
+    return await this.usersRepository.delete(id);
+  }
 }

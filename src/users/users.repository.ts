@@ -47,4 +47,10 @@ export class UsersRepository {
     await this.usersRepository.update(id, data);
     return await this.findById(id);
   }
+
+  public async delete(id: string): Promise<User> {
+    const user = await this.findById(id);
+    await this.usersRepository.delete(id);
+    return user;
+  }
 }
