@@ -48,4 +48,20 @@ export class UsersService {
     if (!user) throw new NotFoundException(`User with id: ${id} not found`);
     return user;
   }
+
+  public async update(id: string, updateUserDto: Partial<CreateUserDto>) {
+    const user = await this.usersRepository.findById(id);
+    if (!user) throw new NotFoundException(`User with id: ${id} not found`);
+
+    if (updateUserDto.email) {
+      await this.checkIfEmailExists(updateUserDto.email);
+    }
+
+    if (updateUserDto.password) {
+      updateUserDto.password = await this.hashPassword(updateUserDto.password);
+    }
+
+    Object.assign(user, updateUserDto);
+    return await this.usersRepository.updateUser(id, user);
+  }
 }
