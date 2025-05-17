@@ -1,4 +1,9 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { HashPasswordHelper } from 'src/helpers/hash-password.helper';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
@@ -34,7 +39,13 @@ export class UsersService {
     if (user) throw new BadRequestException('Email already exists');
   }
 
-  public async findAll() {
+  public async findAll(): Promise<User[]> {
     return this.usersRepository.findAll();
+  }
+
+  public async findOne(id: string): Promise<User> {
+    const user = await this.usersRepository.findById(id);
+    if (!user) throw new NotFoundException(`User with id: ${id} not found`);
+    return user;
   }
 }
