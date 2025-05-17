@@ -22,7 +22,7 @@ export class UsersService {
     user.password = hashedPassword;
     user.role = createUserDto.role || UserRoleEnum.USER;
 
-    return this.usersRepository.createUser(user);
+    return await this.usersRepository.createUser(user);
   }
 
   private async hashPassword(password: string): Promise<string> {
@@ -32,5 +32,9 @@ export class UsersService {
   private async checkIfEmailExists(email: string): Promise<void> {
     const user = await this.usersRepository.findByEmail(email);
     if (user) throw new BadRequestException('Email already exists');
+  }
+
+  public async findAll() {
+    return this.usersRepository.findAll();
   }
 }
