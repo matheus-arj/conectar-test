@@ -6,11 +6,17 @@ import { User } from './entities/user.entity';
 import { UserRoleEnum } from './enum/user-role.enum';
 
 @Injectable()
-export class UsersRepository {
+export class UsersRepository extends Repository<User> {
   constructor(
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
-  ) {}
+  ) {
+    super(
+      usersRepository.target,
+      usersRepository.manager,
+      usersRepository.queryRunner,
+    );
+  }
 
   public async createUser(data: CreateUserDto): Promise<User> {
     const user: Partial<User> = {
@@ -32,6 +38,31 @@ export class UsersRepository {
     return await this.usersRepository.find();
   }
 
+  public findAndCount({
+    role,
+    sortBy,
+    sortOrder,
+    skip,
+    take,
+  }: {
+    role?: 'ADMIN' | 'USER';
+    sortBy: string;
+    sortOrder: 'asc' | 'desc';
+    skip: number;
+    take: number;
+  }): Promise<[User[], number]> {
+    const query = this.createQueryBuilder('user');
+
+    if (role) {
+      query.andWhere('user.role = :role', { role });
+    }
+
+    query.orderBy(`user.${sortBy}`, sortOrder.toUpperCase() as 'ASC' | 'DESC');
+    query.skip(skip).take(take);
+
+    return query.getManyAndCount();
+  }
+
   public async findById(id: string): Promise<User> {
     const user = await this.usersRepository.findOne({ where: { id } });
     if (!user) {
@@ -48,7 +79,7 @@ export class UsersRepository {
     return await this.findById(id);
   }
 
-  public async delete(id: string): Promise<User> {
+  public async deleteUser(id: string): Promise<User> {
     const user = await this.findById(id);
     await this.usersRepository.delete(id);
     return user;
