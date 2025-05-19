@@ -12,6 +12,7 @@ API construída com **NestJS**, utilizando **JWT** para autenticação e control
 - Bcrypt
 - Docker
 - Class Validator / Class Transformer
+- Swagger
 
 ---
 
@@ -112,3 +113,8 @@ Sempre que um usuário realiza login com sucesso, um registro é criado na tabel
 | `userId`    | UUID   | ID do usuário autenticado    |
 | `action`    | string | Ação executada (ex: "LOGIN") |
 | `createdAt` | Date   | Data e hora do evento        |
+
+### Swagger
+
+Para visualizar a documentação Swagger, acesse:
+http://localhost:3000/api
