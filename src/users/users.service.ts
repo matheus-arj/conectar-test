@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { HashPasswordHelper } from 'src/helpers/hash-password.helper';
 import { CreateUserDto } from './dto/create-user.dto';
+import { FindUsersDto } from './dto/find-users.dto';
 import { User } from './entities/user.entity';
 import { UserRoleEnum } from './enum/user-role.enum';
 import { UsersRepository } from './users.repository';
@@ -39,8 +40,36 @@ export class UsersService {
     if (user) throw new BadRequestException('Email already exists');
   }
 
-  public async findAll(): Promise<User[]> {
-    return this.usersRepository.findAll();
+  public async findAll(query: FindUsersDto) {
+    const {
+      role,
+      sortBy = 'name',
+      sortOrder = 'asc',
+      page = 1,
+      perPage = 5,
+    } = query;
+
+    const skip = (page - 1) * perPage;
+
+    const [data, total] = await this.usersRepository.findAndCount({
+      role,
+      sortBy,
+      sortOrder,
+      skip,
+      take: perPage,
+    });
+
+    const lastPage = Math.ceil(total / perPage);
+
+    return {
+      data,
+      meta: {
+        total,
+        page,
+        perPage,
+        lastPage,
+      },
+    };
   }
 
   public async findOne(id: string): Promise<User> {
@@ -66,7 +95,7 @@ export class UsersService {
   }
 
   public async delete(id: string): Promise<User> {
-    return await this.usersRepository.delete(id);
+    return await this.usersRepository.deleteUser(id);
   }
 
   public async findByEmail(email: string): Promise<User | null> {
