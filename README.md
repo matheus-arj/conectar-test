@@ -36,15 +36,49 @@ npm install
 Crie um arquivo .env na raiz com o seguinte conteúdo:
 
 ```env
-JWT_SECRET=uma_chave_bem_secreta
 DB_HOST=localhost
 DB_PORT=5432
 DB_USERNAME=postgres
 DB_PASSWORD=postgres
-DB_NAME=meubanco
+DB_NAME=postgres
+JWT_SECRET="GfR8hEylzUmxnVcZhAC67ooLRbXuIIe2jt2kXgrqRJKkmVtOeYt3ENYqGxR8Y+KjEYuUWIc2MESLJGhG1gJwtQ==""
 ```
 
-### 4. Rodar a aplicação
+### 4. Subir o ambiente com Docker
+
+```
+docker-compose up -d
+```
+
+### 5. Executando as migrations e seeds
+
+Rodar Migrations
+Para aplicar as migrations e atualizar o banco de dados com as últimas alterações do schema, execute:
+
+```
+npm run db:migrate
+```
+
+Rodar Seed para criar usuário ADMIN
+Para criar um usuário ADMIN inicial, execute o script seed:
+
+```
+npx ts-node src/seeds/create-admin.ts
+```
+
+Importante:
+
+- Verifique se as variáveis de ambiente (.env) estão configuradas corretamente, especialmente as credenciais do banco de dados (DB_USERNAME, DB_PASSWORD, DB_HOST, etc).
+
+- O script irá verificar se o usuário ADMIN já existe para evitar duplicatas.
+
+#### Este comando cria um usuário com as seguintes credenciais:
+
+- Email: admin@email.com
+- Senha: 12345678admin
+- Role: ADMIN
+
+### 6. Rodar a aplicação
 
 🧰 Modos de Teste
 Você pode testar esta API de duas formas:
